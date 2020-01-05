@@ -11,8 +11,8 @@
 
 Write your name and email address in the comment space here:
 
-Name:
-Email:
+Name:Leanne Dong
+Email: jdleanne@gmail.com
 
 (...end multi-line comment.)
 ******************** */
@@ -67,6 +67,14 @@ PNG grayscale(PNG image) {
  * @return The image with a spotlight.
  */
 PNG createSpotlight(PNG image, int centerX, int centerY) {
+  for (unsigned x = 0; x < image.width(); x++){
+    for (unsigned y =0; y < image.height(); y++){
+      HSLAPixel & pixel = image.getPixel(x, y);
+      double dis = sqrt(pow((x-centerX)*1.0,2) +  pow((y-centerY)*1.0,2));
+      if (dis <=160) pixel.l *= 1- (dis * 5.0/1000);
+      else pixel.l = 0.2*pixel.l;
+    }
+  }
 
   return image;
   
@@ -84,6 +92,17 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
+  double orange = 0.0;
+  double blue = 0.0;
+  for (unsigned x = 0; x < image.width(); x++){
+    for (unsigned y =0; y < image.height(); y++){
+      HSLAPixel & pixel = image.getPixel(x, y);
+      orange = std::min(abs(pixel.h-11),abs(pixel.h-11-360));
+      blue = std::min(abs(pixel.h-216),abs(pixel.h-216+360));
+    if (blue < orange) pixel.h = 216;
+    else pixel.h = 11;
+    }
+  }
 
   return image;
 }
@@ -102,6 +121,15 @@ PNG illinify(PNG image) {
 * @return The watermarked image.
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
+
+  for (unsigned x = 0; x < firstImage.width();x++){
+    for (unsigned y = 0; y < firstImage.height(); y++)
+    {
+      HSLAPixel &pixel1 = firstImage.getPixel(x,y);
+      HSLAPixel &pixel2 = secondImage.getPixel(x,y);
+      if (pixel2.l == 1.0) pixel1.l += 0.2;
+    }
+  }
 
   return firstImage;
 }
